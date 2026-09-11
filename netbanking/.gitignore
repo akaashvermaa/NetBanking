@@ -1,0 +1,50 @@
+# ==========================================
+# Compiled Java Class Files & Build Artifacts
+# ==========================================
+*.class
+build/
+bin/
+target/
+out/
+WebContent/WEB-INF/classes/com/
+WebContent/WEB-INF/classes/**/*.class
+netbanking/build/
+netbanking/WebContent/WEB-INF/classes/com/
+netbanking/WebContent/WEB-INF/classes/**/*.class
+
+# Package / Archive Files
+*.war
+*.ear
+
+# ==========================================
+# Database Connection & Environment Files
+# ==========================================
+db.properties
+**/db.properties
+WebContent/WEB-INF/classes/db.properties
+netbanking/WebContent/WEB-INF/classes/db.properties
+database.properties
+connection.properties
+*.env
+*.env.*
+.env
+.env.*
+.env.local
+
+# ==========================================
+# IDE & Tooling Files
+# ==========================================
+.vscode/
+netbanking/.vscode/
+.classpath
+.project
+.settings/
+.idea/
+*.iml
+
+# ==========================================
+# OS Generated Files
+# ==========================================
+.DS_Store
+Thumbs.db
+
