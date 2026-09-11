@@ -11,14 +11,24 @@ public class Transaction {
     public static final String STATUS_SUCCESS = "SUCCESS";
     public static final String STATUS_FAILED = "FAILED";
 
+    public static final String KIND_TRANSFER = "TRANSFER";
+    public static final String KIND_ADMIN_CREDIT = "ADMIN_CREDIT";
+    public static final String KIND_ADMIN_DEBIT = "ADMIN_DEBIT";
+
     private int transactionId;
+    // 0 means "no account on this side" (stored as SQL NULL) - admin adjustments have only one side.
     private int fromAccountId;
     private int toAccountId;
     private BigDecimal amount;
+    private String kind;
     private String type;
     private String remark;
     private String status;
     private Timestamp transactionDate;
+
+    // Populated only by the admin global-log query that joins account numbers; null otherwise.
+    private String fromAccountNumber;
+    private String toAccountNumber;
 
     public Transaction() {
     }
@@ -67,6 +77,14 @@ public class Transaction {
         this.amount = amount;
     }
 
+    public String getKind() {
+        return kind;
+    }
+
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
+
     public String getType() {
         return type;
     }
@@ -97,5 +115,21 @@ public class Transaction {
 
     public void setTransactionDate(Timestamp transactionDate) {
         this.transactionDate = transactionDate;
+    }
+
+    public String getFromAccountNumber() {
+        return fromAccountNumber;
+    }
+
+    public void setFromAccountNumber(String fromAccountNumber) {
+        this.fromAccountNumber = fromAccountNumber;
+    }
+
+    public String getToAccountNumber() {
+        return toAccountNumber;
+    }
+
+    public void setToAccountNumber(String toAccountNumber) {
+        this.toAccountNumber = toAccountNumber;
     }
 }

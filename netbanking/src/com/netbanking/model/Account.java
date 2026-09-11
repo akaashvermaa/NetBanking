@@ -7,6 +7,7 @@ public class Account {
 
     public static final String STATUS_ACTIVE = "ACTIVE";
     public static final String STATUS_FROZEN = "FROZEN";
+    public static final String STATUS_CLOSED = "CLOSED";
 
     private int accountId;
     private int userId;
@@ -14,6 +15,10 @@ public class Account {
     private BigDecimal balance;
     private String status;
     private Timestamp createdAt;
+
+    // Populated only by admin queries that join the owning user; null otherwise.
+    private String holderName;
+    private String holderEmail;
 
     public Account() {
     }
@@ -74,5 +79,21 @@ public class Account {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getHolderName() {
+        return holderName;
+    }
+
+    public void setHolderName(String holderName) {
+        this.holderName = holderName;
+    }
+
+    public String getHolderEmail() {
+        return holderEmail;
+    }
+
+    public void setHolderEmail(String holderEmail) {
+        this.holderEmail = holderEmail;
     }
 }

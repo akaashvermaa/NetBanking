@@ -11,6 +11,8 @@ import java.sql.SQLException;
 
 public class AuthService {
 
+    private static final BigDecimal SIGNUP_BONUS = new BigDecimal("10000.00");
+
     private final UserDAO userDAO = new UserDAO();
     private final AccountDAO accountDAO = new AccountDAO();
 
@@ -28,7 +30,7 @@ public class AuthService {
         Account account = new Account();
         account.setUserId(user.getUserId());
         account.setAccountNumber(generateAccountNumber(user.getUserId()));
-        account.setBalance(BigDecimal.ZERO);
+        account.setBalance(SIGNUP_BONUS);
         account.setStatus(Account.STATUS_ACTIVE);
         accountDAO.create(account);
 
@@ -47,6 +49,9 @@ public class AuthService {
         }
         if (Account.STATUS_FROZEN.equals(account.getStatus())) {
             throw new AuthException("Your account has been frozen. Please contact support.");
+        }
+        if (Account.STATUS_CLOSED.equals(account.getStatus())) {
+            throw new AuthException("This account has been closed.");
         }
 
         return user;

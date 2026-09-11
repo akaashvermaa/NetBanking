@@ -44,11 +44,13 @@ public class TransferService {
             Account lockedSender = accountDAO.findByIdForUpdate(sender.getAccountId(), conn);
             Account lockedRecipient = accountDAO.findByIdForUpdate(recipient.getAccountId(), conn);
 
-            if (Account.STATUS_FROZEN.equals(lockedSender.getStatus())) {
-                throw new TransferException("Your account is frozen and cannot make transfers");
+            if (!Account.STATUS_ACTIVE.equals(lockedSender.getStatus())) {
+                throw new TransferException("Your account is " + lockedSender.getStatus().toLowerCase()
+                        + " and cannot make transfers");
             }
-            if (Account.STATUS_FROZEN.equals(lockedRecipient.getStatus())) {
-                throw new TransferException("Recipient account is frozen and cannot receive transfers");
+            if (!Account.STATUS_ACTIVE.equals(lockedRecipient.getStatus())) {
+                throw new TransferException("Recipient account is " + lockedRecipient.getStatus().toLowerCase()
+                        + " and cannot receive transfers");
             }
             if (lockedSender.getBalance().compareTo(amount) < 0) {
                 throw new TransferException("Insufficient balance");
@@ -61,6 +63,7 @@ public class TransferService {
             txn.setFromAccountId(lockedSender.getAccountId());
             txn.setToAccountId(lockedRecipient.getAccountId());
             txn.setAmount(amount);
+            txn.setKind(Transaction.KIND_TRANSFER);
             txn.setRemark(remark);
             txn.setStatus(Transaction.STATUS_SUCCESS);
             transactionDAO.insert(txn, conn);

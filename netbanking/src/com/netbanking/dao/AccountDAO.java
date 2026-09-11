@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccountDAO {
 
@@ -45,6 +47,21 @@ public class AccountDAO {
         return null;
     }
 
+    public Account findById(int accountId) throws SQLException {
+        String sql = "SELECT account_id, user_id, account_number, balance, status, created_at "
+                + "FROM accounts WHERE account_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, accountId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
+            }
+        }
+        return null;
+    }
+
     public Account findByUserId(int userId) throws SQLException {
         String sql = "SELECT account_id, user_id, account_number, balance, status, created_at "
                 + "FROM accounts WHERE user_id = ?";
@@ -58,6 +75,39 @@ public class AccountDAO {
             }
         }
         return null;
+    }
+
+    /**
+     * Admin listing: every account joined with its owner's name and email
+     * (populates Account.holderName / holderEmail).
+     */
+    public List<Account> findAllWithHolders() throws SQLException {
+        String sql = "SELECT a.account_id, a.user_id, a.account_number, a.balance, a.status, a.created_at, "
+                + "u.full_name, u.email "
+                + "FROM accounts a JOIN users u ON u.user_id = a.user_id "
+                + "ORDER BY a.created_at DESC";
+        List<Account> accounts = new ArrayList<>();
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Account account = mapRow(rs);
+                account.setHolderName(rs.getString("full_name"));
+                account.setHolderEmail(rs.getString("email"));
+                accounts.add(account);
+            }
+        }
+        return accounts;
+    }
+
+    public void updateStatus(int accountId, String status) throws SQLException {
+        String sql = "UPDATE accounts SET status = ? WHERE account_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, accountId);
+            ps.executeUpdate();
+        }
     }
 
     /**
