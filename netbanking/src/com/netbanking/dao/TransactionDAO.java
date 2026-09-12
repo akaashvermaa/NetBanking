@@ -13,11 +13,11 @@ import java.util.List;
 
 public class TransactionDAO {
 
-    /**
-     * Transactional insert: caller owns the Connection's commit/rollback so this
-     * can be combined atomically with both accounts' balance updates (see
-     * TransferService).
-     */
+
+
+
+
+
     public void insert(Transaction txn, Connection conn) throws SQLException {
         String sql = "INSERT INTO transactions (from_account_id, to_account_id, amount, kind, remark, status) "
                 + "VALUES (?, ?, ?, ?, ?, ?) RETURNING transaction_id, transaction_date";
@@ -54,10 +54,10 @@ public class TransactionDAO {
         return queryList(sql, accountId, null);
     }
 
-    /**
-     * Global log for the admin side: no viewing perspective, so type is left null
-     * and account numbers are joined in so the log is readable without lookups.
-     */
+
+
+
+
     public List<Transaction> findAll() throws SQLException {
         String sql = "SELECT t.transaction_id, t.from_account_id, t.to_account_id, t.amount, t.kind, "
                 + "t.remark, t.status, t.transaction_date, "
@@ -124,11 +124,11 @@ public class TransactionDAO {
         return transactions;
     }
 
-    /**
-     * A transfer row has no stored DEBIT/CREDIT column (it depends on which side
-     * you're viewing it from), so type is derived here relative to the account
-     * whose history is being fetched.
-     */
+
+
+
+
+
     private Transaction mapRow(ResultSet rs, Integer perspectiveAccountId) throws SQLException {
         Transaction txn = new Transaction();
         txn.setTransactionId(rs.getInt("transaction_id"));

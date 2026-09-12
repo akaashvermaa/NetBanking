@@ -71,7 +71,7 @@ a {
     color: rgba(var(--color-primary-rgb), 0.5);
 }
 
-/* ---------- Buttons ---------- */
+
 
 .btn {
     display: inline-flex;
@@ -123,7 +123,7 @@ a {
     border-color: rgba(220, 38, 38, 0.3);
 }
 
-/* ---------- Forms ---------- */
+
 
 .form-group {
     margin-bottom: var(--space-3);
@@ -159,7 +159,7 @@ a {
     color: rgba(var(--color-primary-rgb), 0.5);
 }
 
-/* ---------- Alerts ---------- */
+
 
 .alert {
     padding: var(--space-3);
@@ -182,7 +182,7 @@ a {
     border-color: rgba(22, 163, 74, 0.25);
 }
 
-/* ---------- Cards ---------- */
+
 
 .card {
     background: var(--color-white);
@@ -191,7 +191,7 @@ a {
     padding: var(--space-4);
 }
 
-/* ---------- Brand mark ---------- */
+
 
 .brand {
     display: flex;
@@ -233,10 +233,10 @@ a {
     color: rgba(255, 255, 255, 0.5);
 }
 
-/* ---------- Auth pages (login / register / admin login) ---------- */
-/* Split-screen layout: a dark brand panel plus a dedicated form panel,   */
-/* so the page reads as one deliberate composition instead of a lone     */
-/* card floating in empty space.                                         */
+
+
+
+
 
 .auth-shell {
     min-height: 100vh;
@@ -331,7 +331,7 @@ a {
     text-decoration: none;
 }
 
-/* ---------- App shell (dashboard / transfer / history) ---------- */
+
 
 .app-shell {
     display: flex;
@@ -452,7 +452,7 @@ a {
     margin: 2px 0 0;
 }
 
-/* ---------- Shared: numerals, gain/loss ---------- */
+
 
 .num {
     font-variant-numeric: tabular-nums;
@@ -467,7 +467,7 @@ a {
 .table-scroll { overflow-x: auto; }
 .card-narrow { max-width: 480px; }
 
-/* ---------- Dashboard ---------- */
+
 
 .db-page {
     display: flex;
@@ -511,7 +511,7 @@ a {
     color: rgba(255, 255, 255, 0.55);
 }
 
-/* Hero: balance + actions */
+
 
 .db-hero {
     display: grid;
@@ -575,7 +575,7 @@ a {
 .db-status-frozen { color: #FBBF24; }
 .db-status-closed { color: #F87171; }
 
-/* Stats */
+
 
 .db-stats {
     display: grid;
@@ -605,7 +605,7 @@ a {
     color: rgba(var(--color-primary-rgb), 0.45);
 }
 
-/* Main: transactions + side column */
+
 
 .db-main {
     display: grid;
@@ -811,7 +811,7 @@ a {
     .db-action { transition: none; }
 }
 
-/* ---------- Transaction table (history) ---------- */
+
 
 .txn-amount {
     font-weight: 600;
@@ -877,9 +877,9 @@ table.txn-table td {
     color: rgba(var(--color-primary-rgb), 0.4);
 }
 
-/* Account-status pill for use on white/light surfaces (tables, lists).   */
-/* .db-status-* is deliberately lighter/more saturated for the dark      */
-/* balance card and is not reused here. */
+
+
+
 .status-pill {
     display: inline-flex;
     align-items: center;
@@ -912,7 +912,7 @@ table.txn-table td {
     min-height: 96px;
 }
 
-/* ---------- Admin ---------- */
+
 
 .admin-tag {
     font-size: 11px;
@@ -971,7 +971,7 @@ table.txn-table td {
     margin: 0;
 }
 
-/* ---------- Cash flow chart (admin dashboard) ---------- */
+
 
 .chart-card .db-card-head {
     align-items: flex-start;
@@ -1136,7 +1136,7 @@ table.txn-table td {
     color: var(--color-primary);
 }
 
-/* ---------- Transfer page ---------- */
+
 
 .transfer-layout {
     display: grid;
@@ -1220,7 +1220,7 @@ table.txn-table td {
     font-size: 13px;
 }
 
-/* ---------- Responsive ---------- */
+
 
 @media (max-width: 900px) {
     .db-hero,

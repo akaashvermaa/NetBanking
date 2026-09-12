@@ -1,8 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page import="com.netbanking.dao.AdminDAO, java.util.List, java.text.SimpleDateFormat" %>
 <%!
-    // Rounds a value up to a "nice" axis maximum (1/2/5/10 x a power of ten)
-    // so gridline labels read as clean numbers instead of odd fractions.
+
+
     private static double niceCeiling(double value) {
         if (value <= 0) {
             return 100;
