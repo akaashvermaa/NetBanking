@@ -11,6 +11,22 @@ import java.sql.SQLException;
 
 public class AdminDAO {
 
+    public Admin create(Admin admin) throws SQLException {
+        String sql = "INSERT INTO admins (full_name, email, password_hash) VALUES (?, ?, ?) RETURNING admin_id";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, admin.getFullName());
+            ps.setString(2, admin.getEmail());
+            ps.setString(3, admin.getPasswordHash());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    admin.setAdminId(rs.getInt("admin_id"));
+                }
+            }
+        }
+        return admin;
+    }
+
     public Admin findByEmail(String email) throws SQLException {
         String sql = "SELECT admin_id, full_name, email, password_hash FROM admins WHERE email = ?";
         try (Connection conn = DBConnection.getConnection();

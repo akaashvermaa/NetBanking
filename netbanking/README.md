@@ -18,26 +18,29 @@ A simple net-banking web application built with plain Java Servlets + JSP on Tom
 
 ```
 netbanking/
+├── schema.sql        Full DB schema — run once against a fresh database
 ├── src/com/netbanking/
 │   ├── controller/   Servlets (one per URL)
 │   ├── filter/       LoginFilter, AdminAuthFilter (session guards)
 │   ├── service/      Business rules + transactions (AuthService, TransferService, Admin*Service)
 │   ├── dao/          JDBC access (UserDAO, AccountDAO, TransactionDAO, AdminDAO)
 │   ├── model/        POJOs (User, Account, Transaction, Admin)
+│   ├── tool/         CreateAdmin — one-off CLI to bootstrap the first admin row
 │   └── util/         DBConnection (reads db.properties), PasswordUtil (BCrypt)
 ├── WebContent/
 │   ├── views/        JSPs (login, register, dashboard, transfer, history, fragments/sidebar-*)
+│   │   └── admin/    Admin JSPs + fragments/admin-sidebar-*
 │   ├── static/css/   style.css
 │   └── WEB-INF/
-│       ├── classes/  compiled output + db.properties
+│       ├── classes/  compiled output + db.properties (+ db.properties.example template)
 │       └── lib/      postgresql + jbcrypt jars
 └── start.bat
 ```
 
 ## Running locally
 
-1. Create the database and app user in PostgreSQL (see **Database schema** below).
-2. Put the connection details in `WebContent/WEB-INF/classes/db.properties`:
+1. Create the role, database, and schema in PostgreSQL — see **Database schema** below, which walks through `schema.sql`.
+2. Copy `WebContent/WEB-INF/classes/db.properties.example` to `db.properties` in the same folder and fill in your own credentials (this file is gitignored — never commit real credentials):
    ```properties
    db.url=jdbc:postgresql://localhost:5432/NetBanking
    db.username=netbanking_app
@@ -45,54 +48,30 @@ netbanking/
    ```
 3. Edit the `JAVA_HOME` / `CATALINA_HOME` paths at the top of `start.bat` if they differ on your machine.
 4. Run `start.bat`. It compiles everything, starts Tomcat and opens `http://localhost:8080/netbanking/login`.
+5. Create the first admin account (there is no self-service admin signup, by design):
+   ```
+   java -cp "WebContent\WEB-INF\classes;WebContent\WEB-INF\lib\postgresql-42.7.4.jar;WebContent\WEB-INF\lib\jbcrypt-0.4.jar" com.netbanking.tool.CreateAdmin "Admin Name" admin@example.com
+   ```
+   It prompts for a password (hidden in a real terminal; visible with a fallback prompt if run somewhere with no attached console, e.g. some IDE run configurations) and inserts the row using the same BCrypt hashing the app uses. Then log in at `/admin/login`.
 
 ## Database schema
 
-There is no `schema.sql` in the repo yet (see *Next up*). The tables the code expects are:
+`schema.sql` in the repo root creates all four tables (`users`, `accounts`, `transactions`, `admins`) with the indexes and check constraints the app relies on, owned by `netbanking_app` so it can run future migrations itself without needing superuser access. As a superuser (e.g. `postgres`):
 
 ```sql
-CREATE TABLE users (
-    user_id       SERIAL PRIMARY KEY,
-    full_name     VARCHAR(100) NOT NULL,
-    email         VARCHAR(150) NOT NULL UNIQUE,
-    password_hash VARCHAR(100) NOT NULL,
-    created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE accounts (
-    account_id     SERIAL PRIMARY KEY,
-    user_id        INT NOT NULL REFERENCES users(user_id),
-    account_number VARCHAR(20) NOT NULL UNIQUE,      -- "NB" + 10-digit user id
-    balance        NUMERIC(15,2) NOT NULL DEFAULT 0,
-    status         VARCHAR(10) NOT NULL DEFAULT 'ACTIVE',  -- ACTIVE | FROZEN | CLOSED
-    created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE transactions (
-    transaction_id   SERIAL PRIMARY KEY,
-    from_account_id  INT REFERENCES accounts(account_id),  -- NULL for admin credits
-    to_account_id    INT REFERENCES accounts(account_id),  -- NULL for admin debits
-    amount           NUMERIC(15,2) NOT NULL,
-    kind             VARCHAR(20) NOT NULL DEFAULT 'TRANSFER', -- TRANSFER | ADMIN_CREDIT | ADMIN_DEBIT
-    remark           VARCHAR(255),
-    status           VARCHAR(10) NOT NULL,                  -- SUCCESS
-    transaction_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE admins (
-    admin_id      SERIAL PRIMARY KEY,
-    full_name     VARCHAR(100) NOT NULL,
-    email         VARCHAR(150) NOT NULL UNIQUE,
-    password_hash VARCHAR(100) NOT NULL
-);
+CREATE ROLE netbanking_app WITH LOGIN PASSWORD 'choose-a-password';
+CREATE DATABASE "NetBanking" OWNER netbanking_app;
+\c NetBanking
+\i schema.sql
 ```
 
-> **Pending migration:** the `transactions.kind` column was added to the Java code but not yet to the live database.
-> Run this once as the table owner (e.g. `postgres` in pgAdmin) or every dashboard/history/transfer page will 500 with
-> `column "kind" does not exist`:
-> ```sql
-> ALTER TABLE transactions ADD COLUMN IF NOT EXISTS kind VARCHAR(20) NOT NULL DEFAULT 'TRANSFER';
-> ```
+Two things worth knowing if you're working against an older/hand-created copy of this database instead of a fresh `schema.sql` run:
+- `transactions.kind` was added to the Java code after the table already existed in some environments. If you see `column "kind" does not exist`, run (as the table owner): `ALTER TABLE transactions ADD COLUMN IF NOT EXISTS kind VARCHAR(20) NOT NULL DEFAULT 'TRANSFER';`
+- The original `accounts_status_check` constraint only allowed `ACTIVE`/`FROZEN` — `CLOSED` (used throughout the admin UI) would be rejected by the database. Fix with:
+  ```sql
+  ALTER TABLE accounts DROP CONSTRAINT accounts_status_check;
+  ALTER TABLE accounts ADD CONSTRAINT accounts_status_check CHECK (status IN ('ACTIVE', 'FROZEN', 'CLOSED'));
+  ```
 
 ---
 
@@ -117,7 +96,7 @@ Rules enforced in `TransferService`:
 
 `LoginFilter` guards `/dashboard`, `/transfer`, `/history` and redirects to `/login` when there is no session.
 
-### Admin side — backend complete, views not yet written
+### Admin side — complete (backend + JSP views)
 
 | URL                     | Servlet                     | What it does |
 |-------------------------|-----------------------------|--------------|
@@ -129,11 +108,7 @@ Rules enforced in `TransferService`:
 | `/admin/adjust-balance` | `AdminAdjustBalanceServlet` | Credit or debit any account by account number with a mandatory reason; logged as `ADMIN_CREDIT` / `ADMIN_DEBIT`, atomic with the balance change, cannot go below zero or touch a closed account. |
 | `/admin/transactions`   | `AdminTransactionsServlet`  | Global transaction log with both account numbers joined in. |
 
-`AdminAuthFilter` guards all admin pages except `/admin/login`.
-
-**Missing:** the JSPs these servlets forward to do not exist yet —
-`views/admin/admin-login.jsp`, `admin-dashboard.jsp`, `admin-users.jsp`, `admin-add-user.jsp`, `admin-adjust-balance.jsp`, `admin-transactions.jsp`.
-Hitting any admin URL currently returns a 404 from the dispatcher. There is also no way to create the first admin row other than inserting it by hand with a BCrypt hash.
+`AdminAuthFilter` guards all admin pages except `/admin/login`. The six views under `WebContent/views/admin/` (plus `fragments/admin-sidebar-*`) are written, wired to the exact `action`/`accountId` POST parameters each servlet expects, and share the customer-facing design system (tokens, `.card`/`.txn-table`/`.badge` components). There is no admin self-signup by design — use `com.netbanking.tool.CreateAdmin` (see **Running locally**) to create the first one.
 
 ---
 
@@ -141,13 +116,9 @@ Hitting any admin URL currently returns a 404 from the dispatcher. There is also
 
 Roughly in priority order:
 
-1. **Apply the `kind` migration** to the database (see the note above) — everything on the customer side is broken until this is done.
-2. **Commit a `schema.sql`** (tables above + a seed admin row) so the DB can be recreated from the repo, and grant/own the tables to `netbanking_app` so future migrations don't need superuser.
-3. **Admin JSP views** — the six pages under `WebContent/views/admin/`, plus an admin sidebar fragment mirroring `fragments/sidebar-start.jsp` / `sidebar-end.jsp`. Wire the freeze/unfreeze/close/reactivate buttons as small POST forms with the `action` + `accountId` parameters `AdminUsersServlet` expects.
-4. **Seed / bootstrap admin** — a tiny one-off `CreateAdmin` main class (or SQL with a pre-computed BCrypt hash) so an admin account can be created without editing the DB manually.
-5. **Customer profile page** — view name/email/account number, change password.
-6. **Input validation & UX polish** — server-side email/password strength checks on register, amount formatting on transfer, empty-state messages on history, pagination for history and the admin transaction log.
-7. **Search / filter** on `/admin/users` (by name, email, account number, status) and `/admin/transactions` (by account, date range, kind).
-8. **Transaction detail / receipt** page per transaction id (owned-by check for customers).
-9. **Security hardening** — CSRF token on all POST forms, session timeout, `HttpOnly`/`SameSite` cookie flags in `web.xml`, rate-limit login attempts, generic error page instead of Tomcat's stack trace.
-10. **Nice-to-haves** — beneficiary list / saved payees, scheduled transfers, email notifications, downloadable statement (CSV/PDF), unit tests for the service layer.
+1. **Customer profile page** — view name/email/account number, change password.
+2. **Input validation & UX polish** — server-side email/password strength checks on register, amount formatting on transfer, empty-state messages on history, pagination for history and the admin transaction log.
+3. **Search / filter** on `/admin/users` (by name, email, account number, status) and `/admin/transactions` (by account, date range, kind).
+4. **Transaction detail / receipt** page per transaction id (owned-by check for customers).
+5. **Security hardening** — CSRF token on all POST forms, session timeout, `HttpOnly`/`SameSite` cookie flags in `web.xml`, rate-limit login attempts, generic error page instead of Tomcat's stack trace.
+6. **Nice-to-haves** — beneficiary list / saved payees, scheduled transfers, email notifications, downloadable statement (CSV/PDF), unit tests for the service layer.

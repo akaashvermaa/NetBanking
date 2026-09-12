@@ -1,0 +1,5 @@
+# Copy this file to db.properties (same directory) and fill in your own
+# values. db.properties is gitignored - never commit real credentials.
+db.url=jdbc:postgresql://localhost:5432/NetBanking
+db.username=netbanking_app
+db.password=change-me
