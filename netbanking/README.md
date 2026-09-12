@@ -6,13 +6,13 @@ A simple net-banking web application built with plain Java Servlets + JSP on Tom
 
 ## Tech stack
 
-| Layer      | Choice                                            |
-|------------|---------------------------------------------------|
-| Runtime    | Java 17, Apache Tomcat 9.0.x (Servlet 4 / JSP 2.3) |
-| Database   | PostgreSQL (`NetBanking` db, `netbanking_app` user) |
-| Libraries  | `postgresql-42.7.4.jar` (JDBC), `jbcrypt-0.4.jar` (password hashing) |
-| Frontend   | JSP + JSTL-free scriptlets, single `static/css/style.css` |
-| Build/run  | `start.bat` (compiles `src/` into `WEB-INF/classes`, starts Tomcat, opens browser) |
+| Layer     | Choice                                                                             |
+| --------- | ---------------------------------------------------------------------------------- |
+| Runtime   | Java 17, Apache Tomcat 9.0.x (Servlet 4 / JSP 2.3)                                 |
+| Database  | PostgreSQL (`NetBanking` db, `netbanking_app` user)                                |
+| Libraries | `postgresql-42.7.4.jar` (JDBC), `jbcrypt-0.4.jar` (password hashing)               |
+| Frontend  | JSP + JSTL-free scriptlets, single `static/css/style.css`                          |
+| Build/run | `start.bat` (compiles `src/` into `WEB-INF/classes`, starts Tomcat, opens browser) |
 
 ## Project layout
 
@@ -52,7 +52,7 @@ netbanking/
    ```
    java -cp "WebContent\WEB-INF\classes;WebContent\WEB-INF\lib\postgresql-42.7.4.jar;WebContent\WEB-INF\lib\jbcrypt-0.4.jar" com.netbanking.tool.CreateAdmin "Admin Name" admin@example.com
    ```
-  It prompts for a password (hidden in a real terminal; visible with a fallback prompt if run somewhere with no attached console, e.g. some IDE run configurations) and inserts the row using the same BCrypt hashing the app uses. Then log in at `/admin/login`.
+   It prompts for a password (hidden in a real terminal; visible with a fallback prompt if run somewhere with no attached console, e.g. some IDE run configurations) and inserts the row using the same BCrypt hashing the app uses. Then log in at `/admin/login`.
 
 ## Running with Docker
 
@@ -76,6 +76,7 @@ CREATE DATABASE "NetBanking" OWNER netbanking_app;
 ```
 
 Two things worth knowing if you're working against an older/hand-created copy of this database instead of a fresh `schema.sql` run:
+
 - `transactions.kind` was added to the Java code after the table already existed in some environments. If you see `column "kind" does not exist`, run (as the table owner): `ALTER TABLE transactions ADD COLUMN IF NOT EXISTS kind VARCHAR(20) NOT NULL DEFAULT 'TRANSFER';`
 - The original `accounts_status_check` constraint only allowed `ACTIVE`/`FROZEN` — `CLOSED` (used throughout the admin UI) would be rejected by the database. Fix with:
   ```sql
@@ -95,16 +96,17 @@ Two things worth knowing if you're working against an older/hand-created copy of
 
 ### Customer side — complete (backend + JSP views)
 
-| URL          | Servlet             | What it does |
-|--------------|---------------------|--------------|
-| `/register`  | `RegisterServlet`   | Creates a user (BCrypt-hashed password) and a `SAVINGS` account with a ₹1,000 signup bonus; account number is `NB` + zero-padded user id. Rejects duplicate emails. |
-| `/login`     | `LoginServlet`      | Email + password login; refuses FROZEN / CLOSED accounts with a clear message. Puts the user in the session. |
-| `/logout`    | `LogoutServlet`     | Invalidates the session. |
-| `/dashboard` | `DashboardServlet`  | Shows balance, account number/status, lifetime total sent / received, and the 5 most recent transactions. |
-| `/transfer`  | `TransferServlet`   | Fund transfer by recipient account number with optional remark. |
-| `/history`   | `HistoryServlet`    | Full transaction history for the logged-in account. |
+| URL          | Servlet            | What it does                                                                                                                                                        |
+| ------------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/register`  | `RegisterServlet`  | Creates a user (BCrypt-hashed password) and a `SAVINGS` account with a ₹1,000 signup bonus; account number is `NB` + zero-padded user id. Rejects duplicate emails. |
+| `/login`     | `LoginServlet`     | Email + password login; refuses FROZEN / CLOSED accounts with a clear message. Puts the user in the session.                                                        |
+| `/logout`    | `LogoutServlet`    | Invalidates the session.                                                                                                                                            |
+| `/dashboard` | `DashboardServlet` | Shows balance, account number/status, lifetime total sent / received, and the 5 most recent transactions.                                                           |
+| `/transfer`  | `TransferServlet`  | Fund transfer by recipient account number with optional remark.                                                                                                     |
+| `/history`   | `HistoryServlet`   | Full transaction history for the logged-in account.                                                                                                                 |
 
 Rules enforced in `TransferService`:
+
 - amount must be positive, recipient must exist, cannot transfer to self
 - both accounts must be `ACTIVE`, sender must have sufficient balance
 - both balance updates + the transaction log row are written in **one DB transaction** with `SELECT … FOR UPDATE` row locks, so concurrent transfers can't overdraw an account
@@ -114,15 +116,15 @@ Rules enforced in `TransferService`:
 
 ### Admin side — complete (backend + JSP views)
 
-| URL                     | Servlet                     | What it does |
-|-------------------------|-----------------------------|--------------|
-| `/admin/login`          | `AdminLoginServlet`         | Separate admin login against the `admins` table; stores the admin in the session. |
-| `/admin/logout`         | `AdminLogoutServlet`        | Invalidates the admin session. |
-| `/admin/dashboard`      | `AdminDashboardServlet`     | System stats in one query: total users / accounts / balance, active / frozen / closed counts, total transactions. |
-| `/admin/users`          | `AdminUsersServlet`         | Lists every account with holder name + email; POST actions `freeze`, `unfreeze`, `close`, `reactivate` with state-transition validation and flash messages. |
+| URL                     | Servlet                     | What it does                                                                                                                                                                                                                                                                                                                      |
+| ----------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/admin/login`          | `AdminLoginServlet`         | Separate admin login against the `admins` table; stores the admin in the session.                                                                                                                                                                                                                                                 |
+| `/admin/logout`         | `AdminLogoutServlet`        | Invalidates the admin session.                                                                                                                                                                                                                                                                                                    |
+| `/admin/dashboard`      | `AdminDashboardServlet`     | System stats in one query: total users / accounts / balance, active / frozen / closed counts, total transactions.                                                                                                                                                                                                                 |
+| `/admin/users`          | `AdminUsersServlet`         | Lists every account with holder name + email; POST actions `freeze`, `unfreeze`, `close`, `reactivate` with state-transition validation and flash messages.                                                                                                                                                                       |
 | `/admin/add-user`       | `AdminAddUserServlet`       | Admin creates a customer with a chosen opening credit (defaults to ₹1,000, no fixed amount), account type (`SAVINGS`/`CURRENT`), and an optional profile photo (JPG/PNG/WEBP, up to 2MB, saved under `WebContent/static/uploads/profile-photos/`). Goes through the same `AuthService.register()` as self-registration otherwise. |
-| `/admin/adjust-balance` | `AdminAdjustBalanceServlet` | Credit or debit any account by account number with a mandatory reason; logged as `ADMIN_CREDIT` / `ADMIN_DEBIT`, atomic with the balance change, cannot go below zero or touch a closed account. |
-| `/admin/transactions`   | `AdminTransactionsServlet`  | Global transaction log with both account numbers joined in. |
+| `/admin/adjust-balance` | `AdminAdjustBalanceServlet` | Credit or debit any account by account number with a mandatory reason; logged as `ADMIN_CREDIT` / `ADMIN_DEBIT`, atomic with the balance change, cannot go below zero or touch a closed account.                                                                                                                                  |
+| `/admin/transactions`   | `AdminTransactionsServlet`  | Global transaction log with both account numbers joined in.                                                                                                                                                                                                                                                                       |
 
 `AdminAuthFilter` guards all admin pages except `/admin/login`. The six views under `WebContent/views/admin/` (plus `fragments/admin-sidebar-*`) are written, wired to the exact `action`/`accountId` POST parameters each servlet expects, and share the customer-facing design system (tokens, `.card`/`.txn-table`/`.badge` components). There is no admin self-signup by design — use `com.netbanking.tool.CreateAdmin` (see **Running locally**) to create the first one.
 

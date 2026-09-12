@@ -21,10 +21,10 @@ public class DBConnection {
             throw new RuntimeException("Failed to load db.properties", e);
         }
 
-        // Under Tomcat, DriverManager's automatic ServiceLoader-based driver discovery
-        // runs once per JVM using whatever classloader was active at that moment - often
-        // Tomcat's own, before this webapp's WEB-INF/lib classloader exists. Explicitly
-        // loading the driver class here registers it directly, independent of that.
+
+
+
+
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {

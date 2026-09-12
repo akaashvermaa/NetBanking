@@ -48,17 +48,17 @@ if not exist "%CLASSES_DIR%\db.properties" (
 )
 
 echo Compiling Java sources...
-rem javac's @argfile parser treats backslash as an escape character, which mangles
-rem Windows paths - so list sources with forward slashes instead (javac accepts them fine).
+
+
 (for /r "%PROJECT_DIR%src" %%f in (*.java) do (
     set "p=%%f"
     set "p=!p:\=/!"
     echo "!p!"
 )) > "%SOURCES_FILE%"
 
-rem -encoding UTF-8: source files are saved as UTF-8, but javac reads them using
-rem the platform default charset otherwise - on Windows that silently mangles any
-rem non-ASCII literal (e.g. the rupee sign) instead of failing loudly.
+
+
+
 "%JAVA_HOME%\bin\javac" -encoding UTF-8 -cp "%PG_JAR%;%BCRYPT_JAR%;%SERVLET_JAR%" -d "%CLASSES_DIR%" "@%SOURCES_FILE%"
 if errorlevel 1 (
     echo.

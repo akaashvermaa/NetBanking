@@ -20,7 +20,7 @@ public class AdminUsersServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // Flash messages set by doPost survive the redirect via the session, then are consumed here.
+
         HttpSession session = req.getSession(false);
         if (session != null) {
             req.setAttribute("success", session.getAttribute("flashSuccess"));

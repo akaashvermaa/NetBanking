@@ -34,11 +34,11 @@ public class AdminUserService {
         return transactionDAO.findAll();
     }
 
-    /**
-     * Admin-created users go through the same register() as self-registration,
-     * but with an admin-chosen opening balance, account type, and optional
-     * profile photo instead of the fixed signup defaults.
-     */
+
+
+
+
+
     public Account createUser(String fullName, String email, String plainPassword, BigDecimal openingBalance,
             String accountType, String profilePhoto) throws AuthException, SQLException {
         User user = authService.register(fullName, email, plainPassword, openingBalance, accountType, profilePhoto);

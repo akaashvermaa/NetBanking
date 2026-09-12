@@ -55,7 +55,7 @@ public class TransferServlet extends HttpServlet {
         }
     }
 
-    /** Always loaded before forwarding to the JSP, so the recipient picker survives errors too. */
+
     private void loadRecipients(HttpServletRequest req) throws ServletException {
         User user = (User) req.getSession(false).getAttribute("user");
         try {
