@@ -42,7 +42,6 @@
     User dashboardUser = (User) session.getAttribute("user");
     String dashboardFullName = dashboardUser.getFullName();
     String firstName = dashboardFullName.trim().split("\\s+")[0];
-    String statusClass = account.getStatus().toLowerCase();
 %>
 <% String activePage = "dashboard"; %>
 <%@ include file="fragments/sidebar-start.jsp" %>
@@ -62,9 +61,6 @@
         <article class="db-balance">
             <div class="db-balance-top">
                 <span class="db-label db-label-dark">Available balance</span>
-                <span class="db-status db-status-<%= statusClass %>">
-                    <span class="db-status-dot"></span><%= account.getStatus() %>
-                </span>
             </div>
             <p class="db-balance-amount num">&#8377;<%= String.format("%,.2f", account.getBalance()) %></p>
             <p class="db-balance-meta">Account <span class="num"><%= account.getAccountNumber() %></span></p>
