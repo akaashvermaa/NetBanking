@@ -25,7 +25,10 @@ rem Windows paths - so list sources with forward slashes instead (javac accepts 
     echo "!p!"
 )) > "%SOURCES_FILE%"
 
-"%JAVA_HOME%\bin\javac" -cp "%PG_JAR%;%BCRYPT_JAR%;%SERVLET_JAR%" -d "%CLASSES_DIR%" "@%SOURCES_FILE%"
+rem -encoding UTF-8: source files are saved as UTF-8, but javac reads them using
+rem the platform default charset otherwise - on Windows that silently mangles any
+rem non-ASCII literal (e.g. the rupee sign) instead of failing loudly.
+"%JAVA_HOME%\bin\javac" -encoding UTF-8 -cp "%PG_JAR%;%BCRYPT_JAR%;%SERVLET_JAR%" -d "%CLASSES_DIR%" "@%SOURCES_FILE%"
 if errorlevel 1 (
     echo.
     echo Compilation FAILED. See errors above.

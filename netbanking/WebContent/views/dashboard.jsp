@@ -35,10 +35,10 @@
     String today = new SimpleDateFormat("EEEE, dd MMM yyyy").format(new java.util.Date());
     String moneyTip = MONEY_TIPS[new Random().nextInt(MONEY_TIPS.length)];
 
-    // Named distinctly from sidebar-start.jsp's own currentUser/fullName locals:
-    // it is statically <%@ include %>-d below, merging into this same method,
-    // so identically-named locals here would be a duplicate-declaration
-    // compile error.
+    // Named distinctly from sidebar-start.jsp's own currentUser/fullName
+    // locals: that fragment is statically included below, merging into this
+    // same generated method, so identically-named locals here would be a
+    // duplicate-declaration compile error.
     User dashboardUser = (User) session.getAttribute("user");
     String dashboardFullName = dashboardUser.getFullName();
     String firstName = dashboardFullName.trim().split("\\s+")[0];
