@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: NetBanking
+      POSTGRES_USER: netbanking_app
+      POSTGRES_PASSWORD: netbanking_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U netbanking_app -d NetBanking"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/NetBanking
+      DB_USERNAME: netbanking_app
+      DB_PASSWORD: netbanking_password
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploaded-photos:/usr/local/tomcat/webapps/netbanking/static/uploads/profile-photos
+
+volumes:
+  postgres-data:
+  uploaded-photos:

@@ -37,7 +37,7 @@ netbanking/
 └── start.bat
 ```
 
-## Running locally
+## Running locally on Windows
 
 1. Create the role, database, and schema in PostgreSQL — see **Database schema** below, which walks through `schema.sql`.
 2. Copy `WebContent/WEB-INF/classes/db.properties.example` to `db.properties` in the same folder and fill in your own credentials (this file is gitignored — never commit real credentials):
@@ -46,13 +46,23 @@ netbanking/
    db.username=netbanking_app
    db.password=...
    ```
-3. Edit the `JAVA_HOME` / `CATALINA_HOME` paths at the top of `start.bat` if they differ on your machine.
-4. Run `start.bat`. It compiles everything, starts Tomcat and opens `http://localhost:8080/netbanking/login`.
+3. Run `start.bat`. It finds or installs a Java 17 JDK, downloads Tomcat and any missing jars into the ignored `.tools/` or `WEB-INF/lib/` folders, compiles everything, starts Tomcat, and opens `http://localhost:8080/netbanking/login`.
+4. Update `WebContent/WEB-INF/classes/db.properties` with your PostgreSQL credentials before logging in. PostgreSQL itself must be installed and running locally for this route.
 5. Create the first admin account (there is no self-service admin signup, by design):
    ```
    java -cp "WebContent\WEB-INF\classes;WebContent\WEB-INF\lib\postgresql-42.7.4.jar;WebContent\WEB-INF\lib\jbcrypt-0.4.jar" com.netbanking.tool.CreateAdmin "Admin Name" admin@example.com
    ```
-   It prompts for a password (hidden in a real terminal; visible with a fallback prompt if run somewhere with no attached console, e.g. some IDE run configurations) and inserts the row using the same BCrypt hashing the app uses. Then log in at `/admin/login`.
+  It prompts for a password (hidden in a real terminal; visible with a fallback prompt if run somewhere with no attached console, e.g. some IDE run configurations) and inserts the row using the same BCrypt hashing the app uses. Then log in at `/admin/login`.
+
+## Running with Docker
+
+Install Docker Desktop, then run this from the project folder:
+
+```bat
+docker compose up --build
+```
+
+This starts PostgreSQL, applies `schema.sql` on the first run, builds the Java/Tomcat application, and serves it at `http://localhost:8080/netbanking/login`. Database data and uploaded profile photos are stored in Docker volumes. Stop it with `Ctrl+C`; use `docker compose down -v` only when you intentionally want to delete the database and uploads.
 
 ## Database schema
 

@@ -1,0 +1,7 @@
+.git
+.tools
+WebContent/WEB-INF/classes/com
+WebContent/WEB-INF/classes/db.properties
+WebContent/static/uploads
+*.class
+*.war

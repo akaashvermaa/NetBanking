@@ -15,6 +15,7 @@ netbanking/WebContent/WEB-INF/classes/**/*.class
 # Package / Archive Files
 *.war
 *.ear
+.tools/
 
 # ==========================================
 # Database Connection & Environment Files
