@@ -35,9 +35,13 @@
     String today = new SimpleDateFormat("EEEE, dd MMM yyyy").format(new java.util.Date());
     String moneyTip = MONEY_TIPS[new Random().nextInt(MONEY_TIPS.length)];
 
-    User currentUser = (User) session.getAttribute("user");
-    String fullName = currentUser.getFullName();
-    String firstName = fullName.trim().split("\\s+")[0];
+    // Named distinctly from sidebar-start.jsp's own currentUser/fullName locals:
+    // it is statically <%@ include %>-d below, merging into this same method,
+    // so identically-named locals here would be a duplicate-declaration
+    // compile error.
+    User dashboardUser = (User) session.getAttribute("user");
+    String dashboardFullName = dashboardUser.getFullName();
+    String firstName = dashboardFullName.trim().split("\\s+")[0];
     String statusClass = account.getStatus().toLowerCase();
 %>
 <% String activePage = "dashboard"; %>
@@ -148,7 +152,7 @@
             <article class="db-card db-details" id="details">
                 <h2>Account details</h2>
                 <dl class="db-detail-list">
-                    <div><dt>Holder</dt><dd><%= fullName %></dd></div>
+                    <div><dt>Holder</dt><dd><%= dashboardFullName %></dd></div>
                     <div><dt>Account number</dt><dd class="num"><%= account.getAccountNumber() %></dd></div>
                     <div><dt>Member since</dt><dd><%= monthFmt.format(account.getCreatedAt()) %></dd></div>
                     <div><dt>Status</dt><dd><%= account.getStatus() %></dd></div>
