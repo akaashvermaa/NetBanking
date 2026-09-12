@@ -9,11 +9,17 @@ import com.netbanking.util.DBConnection;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public class TransferService {
 
     private final AccountDAO accountDAO = new AccountDAO();
     private final TransactionDAO transactionDAO = new TransactionDAO();
+
+    /** Suggested recipients for the transfer page - see AccountDAO.findOtherActiveAccounts. */
+    public List<Account> listRecipients(int currentUserId) throws SQLException {
+        return accountDAO.findOtherActiveAccounts(currentUserId);
+    }
 
     public void transfer(int senderUserId, String recipientAccountNumber, BigDecimal amount, String remark)
             throws TransferException, SQLException {

@@ -1136,16 +1136,107 @@ table.txn-table td {
     color: var(--color-primary);
 }
 
+/* ---------- Transfer page ---------- */
+
+.transfer-layout {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: var(--space-4);
+    align-items: start;
+}
+
+.recipients-subtitle {
+    margin: 2px 0 var(--space-3);
+}
+
+.recipient-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+}
+
+.recipient-chip {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.recipient-chip:hover,
+.recipient-chip:focus-visible {
+    border-color: var(--color-primary);
+    outline: none;
+}
+
+.recipient-chip-active {
+    border-color: var(--color-accent);
+    background: rgba(244, 196, 48, 0.08);
+}
+
+.recipient-avatar {
+    font-size: 13px;
+}
+
+.recipient-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.recipient-info strong {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recipient-info .num {
+    font-size: 11px;
+    color: rgba(var(--color-primary-rgb), 0.5);
+}
+
+.recipient-type {
+    flex-shrink: 0;
+    font-size: 10px;
+    padding: 2px 7px;
+}
+
+.selected-recipient {
+    margin: 0 0 var(--space-3);
+    padding: 10px var(--space-3);
+    background: rgba(244, 196, 48, 0.08);
+    border: 1px solid rgba(244, 196, 48, 0.3);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+}
+
 /* ---------- Responsive ---------- */
 
 @media (max-width: 900px) {
     .db-hero,
-    .db-main {
+    .db-main,
+    .transfer-layout {
         grid-template-columns: 1fr;
     }
 
     .admin-stats {
         grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .recipient-grid {
+        grid-template-columns: 1fr;
     }
 }
 

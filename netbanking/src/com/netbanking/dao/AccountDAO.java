@@ -102,6 +102,36 @@ public class AccountDAO {
         return accounts;
     }
 
+    /**
+     * Other active accounts (not the caller's own) for the transfer page's
+     * recipient picker - lets a demo pick a payee instead of typing an account
+     * number from memory. Capped to the dozen most recently created accounts;
+     * only ACTIVE ones, since a suggested recipient the transfer would then
+     * reject (frozen/closed) is worse than not suggesting one at all.
+     */
+    public List<Account> findOtherActiveAccounts(int excludeUserId) throws SQLException {
+        String sql = "SELECT a.account_id, a.user_id, a.account_number, a.balance, a.status, a.account_type, a.created_at, "
+                + "u.full_name "
+                + "FROM accounts a JOIN users u ON u.user_id = a.user_id "
+                + "WHERE a.user_id != ? AND a.status = ? "
+                + "ORDER BY a.created_at DESC "
+                + "LIMIT 12";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, excludeUserId);
+            ps.setString(2, Account.STATUS_ACTIVE);
+            try (ResultSet rs = ps.executeQuery()) {
+                List<Account> accounts = new ArrayList<>();
+                while (rs.next()) {
+                    Account account = mapRow(rs);
+                    account.setHolderName(rs.getString("full_name"));
+                    accounts.add(account);
+                }
+                return accounts;
+            }
+        }
+    }
+
     public void updateStatus(int accountId, String status) throws SQLException {
         String sql = "UPDATE accounts SET status = ? WHERE account_id = ?";
         try (Connection conn = DBConnection.getConnection();

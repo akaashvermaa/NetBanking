@@ -21,12 +21,14 @@ public class TransferServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        loadRecipients(req);
         req.getRequestDispatcher("/views/transfer.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         User user = (User) req.getSession(false).getAttribute("user");
+        loadRecipients(req);
 
         String recipientAccountNumber = req.getParameter("recipientAccountNumber");
         String amountText = req.getParameter("amount");
@@ -50,6 +52,16 @@ public class TransferServlet extends HttpServlet {
             req.getRequestDispatcher("/views/transfer.jsp").forward(req, resp);
         } catch (SQLException e) {
             throw new ServletException("Database error during transfer", e);
+        }
+    }
+
+    /** Always loaded before forwarding to the JSP, so the recipient picker survives errors too. */
+    private void loadRecipients(HttpServletRequest req) throws ServletException {
+        User user = (User) req.getSession(false).getAttribute("user");
+        try {
+            req.setAttribute("recipients", transferService.listRecipients(user.getUserId()));
+        } catch (SQLException e) {
+            throw new ServletException("Database error loading recipients", e);
         }
     }
 }
