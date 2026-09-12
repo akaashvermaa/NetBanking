@@ -21,6 +21,10 @@ public class AdminUserService {
         return adminDAO.getSystemStats();
     }
 
+    public List<AdminDAO.DailyFlow> getDailyCashFlow(int days) throws SQLException {
+        return adminDAO.getDailyCashFlow(days);
+    }
+
     public List<Account> listAccounts() throws SQLException {
         return accountDAO.findAllWithHolders();
     }

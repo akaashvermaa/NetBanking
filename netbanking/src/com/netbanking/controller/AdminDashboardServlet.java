@@ -20,6 +20,7 @@ public class AdminDashboardServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             req.setAttribute("stats", adminUserService.getSystemStats());
+            req.setAttribute("cashFlow", adminUserService.getDailyCashFlow(14));
             req.getRequestDispatcher("/views/admin/admin-dashboard.jsp").forward(req, resp);
         } catch (SQLException e) {
             throw new ServletException("Database error loading admin dashboard", e);
