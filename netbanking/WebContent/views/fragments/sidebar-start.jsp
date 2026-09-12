@@ -28,9 +28,9 @@
         </div>
         <div class="sidebar-footer">
             <div class="avatar"><%= initial %></div>
-            <div style="flex:1; min-width:0;">
-                <div style="font-weight:600; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><%= fullName %></div>
-                <a href="<%= request.getContextPath() %>/logout" class="text-muted" style="font-size:12px; text-decoration:none;">Log out</a>
+            <div class="user-info">
+                <div class="user-name"><%= fullName %></div>
+                <a href="<%= request.getContextPath() %>/logout" class="text-muted user-logout">Log out</a>
             </div>
         </div>
     </aside>

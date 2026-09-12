@@ -8,6 +8,7 @@
     --color-border: #E5E5E5;
     --color-accent: #F4C430;
     --color-success: #16A34A;
+    --color-warning: #B45309;
     --color-danger: #DC2626;
     --color-white: #FFFFFF;
 
@@ -211,41 +212,110 @@ a {
     color: var(--color-primary);
 }
 
-/* ---------- Auth pages (login / register) ---------- */
+.brand-on-dark .brand-mark {
+    background: var(--color-accent);
+    color: var(--color-primary);
+}
 
-.auth-page {
+.brand-on-dark .brand-name {
+    color: var(--color-white);
+}
+
+.brand-on-dark .admin-tag {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* ---------- Auth pages (login / register / admin login) ---------- */
+/* Split-screen layout: a dark brand panel plus a dedicated form panel,   */
+/* so the page reads as one deliberate composition instead of a lone     */
+/* card floating in empty space.                                         */
+
+.auth-shell {
     min-height: 100vh;
+    display: flex;
+}
+
+.auth-visual {
+    flex: 1 1 45%;
+    background: var(--color-primary);
+    color: var(--color-white);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-6);
+}
+
+.auth-visual-eyebrow {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.auth-visual-title {
+    margin: var(--space-3) 0 0;
+    font-size: 34px;
+    line-height: 1.2;
+    max-width: 22ch;
+}
+
+.auth-visual-list {
+    list-style: none;
+    margin: var(--space-5) 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.auth-visual-list li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.auth-visual-list li svg {
+    flex-shrink: 0;
+    color: var(--color-accent);
+}
+
+.auth-visual-foot {
+    margin: 0;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.45);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding-top: var(--space-3);
+}
+
+.auth-form-panel {
+    flex: 1 1 55%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--space-4);
+    padding: var(--space-5);
+    background: var(--color-background);
 }
 
-.auth-card {
+.auth-form-inner {
     width: 100%;
-    max-width: 400px;
-    background: var(--color-white);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6) var(--space-5);
+    max-width: 360px;
 }
 
-.auth-card .brand {
-    margin-bottom: var(--space-5);
+.auth-form-inner .brand {
+    margin-bottom: var(--space-6);
 }
 
-.auth-card h1 {
+.auth-form-inner h1 {
     margin-bottom: var(--space-1);
 }
 
-.auth-card .subtitle {
+.auth-form-inner .subtitle {
     margin-bottom: var(--space-5);
 }
 
 .auth-footer {
     margin-top: var(--space-4);
     font-size: 13px;
-    text-align: center;
 }
 
 .auth-footer a {
@@ -328,6 +398,24 @@ a {
     flex-shrink: 0;
 }
 
+.user-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 13px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-logout {
+    font-size: 12px;
+    text-decoration: none;
+}
+
 .main {
     flex: 1;
     padding: var(--space-5);
@@ -365,6 +453,11 @@ a {
 
 .gain { color: var(--color-success); }
 .loss { color: var(--color-danger); }
+.warn { color: var(--color-warning); }
+
+.text-right { text-align: right; }
+.table-scroll { overflow-x: auto; }
+.card-narrow { max-width: 480px; }
 
 /* ---------- Dashboard ---------- */
 
@@ -788,6 +881,30 @@ table.txn-table td {
 .badge-credit { background: rgba(22, 163, 74, 0.1); color: var(--color-success); }
 .badge-transfer { background: rgba(var(--color-primary-rgb), 0.08); color: rgba(var(--color-primary-rgb), 0.7); }
 
+/* Account-status pill for use on white/light surfaces (tables, lists).   */
+/* .db-status-* is deliberately lighter/more saturated for the dark      */
+/* balance card and is not reused here. */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-pill-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.status-pill-active { background: rgba(22, 163, 74, 0.1); color: var(--color-success); }
+.status-pill-frozen { background: rgba(180, 83, 9, 0.1); color: var(--color-warning); }
+.status-pill-closed { background: rgba(220, 38, 38, 0.1); color: var(--color-danger); }
+
 .empty-state {
     display: flex;
     flex-direction: column;
@@ -868,6 +985,16 @@ table.txn-table td {
 
     .admin-stats {
         grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 860px) {
+    .auth-visual {
+        display: none;
+    }
+
+    .auth-form-panel {
+        background: var(--color-white);
     }
 }
 

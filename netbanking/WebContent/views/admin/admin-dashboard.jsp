@@ -50,7 +50,7 @@
         </article>
         <article class="db-stat">
             <span class="db-label">Frozen</span>
-            <p class="db-stat-value num" style="color:#B45309;"><%= stats.frozenCount %></p>
+            <p class="db-stat-value num warn"><%= stats.frozenCount %></p>
             <span class="db-stat-caption">Temporarily suspended</span>
         </article>
         <article class="db-stat">

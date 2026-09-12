@@ -22,7 +22,7 @@
         </div>
     </div>
 
-    <div class="card" style="max-width: 480px;">
+    <div class="card card-narrow">
         <% if (request.getAttribute("error") != null) { %>
             <div class="alert alert-error"><%= request.getAttribute("error") %></div>
         <% } %>

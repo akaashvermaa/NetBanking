@@ -27,7 +27,7 @@
         <% if (transactions == null || transactions.isEmpty()) { %>
             <div class="empty-state text-muted">No transactions yet.</div>
         <% } else { %>
-            <div style="overflow-x:auto;">
+            <div class="table-scroll">
             <table class="txn-table">
                 <thead>
                     <tr>
@@ -36,7 +36,7 @@
                         <th>To</th>
                         <th>Kind</th>
                         <th>Remark</th>
-                        <th style="text-align:right;">Amount</th>
+                        <th class="text-right">Amount</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,7 +53,7 @@
                         <td class="num"><%= txn.getToAccountNumber() != null ? txn.getToAccountNumber() : "&mdash;" %></td>
                         <td><span class="badge <%= kindBadgeClass %>"><%= txn.getKind() %></span></td>
                         <td class="text-muted"><%= (txn.getRemark() != null && !txn.getRemark().isEmpty()) ? txn.getRemark() : "&mdash;" %></td>
-                        <td style="text-align:right;" class="<%= amountClass %>">
+                        <td class="text-right <%= amountClass %>">
                             <%= amountSign %>&#8377;<%= String.format("%,.2f", txn.getAmount()) %>
                         </td>
                     </tr>

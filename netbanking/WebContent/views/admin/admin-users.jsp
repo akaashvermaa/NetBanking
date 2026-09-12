@@ -34,16 +34,16 @@
         <% if (accounts == null || accounts.isEmpty()) { %>
             <div class="empty-state text-muted">No accounts yet.</div>
         <% } else { %>
-            <div style="overflow-x:auto;">
+            <div class="table-scroll">
             <table class="txn-table">
                 <thead>
                     <tr>
                         <th>Holder</th>
                         <th>Email</th>
                         <th>Account number</th>
-                        <th style="text-align:right;">Balance</th>
+                        <th class="text-right">Balance</th>
                         <th>Status</th>
-                        <th style="text-align:right;">Actions</th>
+                        <th class="text-right">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,10 +54,10 @@
                         <td><%= account.getHolderName() %></td>
                         <td class="text-muted"><%= account.getHolderEmail() %></td>
                         <td class="num"><%= account.getAccountNumber() %></td>
-                        <td style="text-align:right;" class="num">&#8377;<%= String.format("%,.2f", account.getBalance()) %></td>
+                        <td class="text-right num">&#8377;<%= String.format("%,.2f", account.getBalance()) %></td>
                         <td>
-                            <span class="db-status db-status-<%= statusClass %>" style="background:rgba(var(--color-primary-rgb),0.06);">
-                                <span class="db-status-dot"></span><%= account.getStatus() %>
+                            <span class="status-pill status-pill-<%= statusClass %>">
+                                <span class="status-pill-dot"></span><%= account.getStatus() %>
                             </span>
                         </td>
                         <td class="admin-row-actions">

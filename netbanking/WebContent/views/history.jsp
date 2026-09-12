@@ -27,14 +27,14 @@
         <% if (transactions == null || transactions.isEmpty()) { %>
             <div class="empty-state text-muted">No transactions yet.</div>
         <% } else { %>
-            <div style="overflow-x:auto;">
+            <div class="table-scroll">
             <table class="txn-table">
                 <thead>
                     <tr>
                         <th>Date</th>
                         <th>Type</th>
                         <th>Remark</th>
-                        <th style="text-align:right;">Amount</th>
+                        <th class="text-right">Amount</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,7 +45,7 @@
                         <td><%= sdf.format(txn.getTransactionDate()) %></td>
                         <td><span class="badge <%= isDebit ? "badge-debit" : "badge-credit" %>"><%= txn.getType() %></span></td>
                         <td class="text-muted"><%= (txn.getRemark() != null && !txn.getRemark().isEmpty()) ? txn.getRemark() : "&mdash;" %></td>
-                        <td style="text-align:right;" class="<%= isDebit ? "txn-amount debit" : "txn-amount credit" %>">
+                        <td class="text-right <%= isDebit ? "txn-amount debit" : "txn-amount credit" %>">
                             <%= isDebit ? "-" : "+" %>&#8377;<%= String.format("%,.2f", txn.getAmount()) %>
                         </td>
                     </tr>
