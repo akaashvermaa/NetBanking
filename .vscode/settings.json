@@ -1,15 +1,16 @@
 {
-    "java.configuration.runtimes": [
-        {
-            "name": "JavaSE-17",
-            "path": "C:\\Program Files\\Java\\jdk-17",
-            "default": true
-        }
-    ],
-    "java.project.sourcePaths": ["netbanking/src"],
-    "java.project.outputPath": "netbanking/WebContent/WEB-INF/classes",
-    "java.project.referencedLibraries": [
-        "netbanking/WebContent/WEB-INF/lib/*.jar",
-        "D:/TOMCAT/apache-tomcat-9.0.120/lib/servlet-api.jar"
-    ]
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-17",
+      "path": "C:\\Program Files\\Java\\jdk-17",
+      "default": true
+    }
+  ],
+  "java.project.sourcePaths": ["netbanking/src"],
+  "java.project.outputPath": "netbanking/WebContent/WEB-INF/classes",
+  "java.project.referencedLibraries": [
+    "netbanking/WebContent/WEB-INF/lib/*.jar",
+    "netbanking/.tools/apache-tomcat-9.0.120/lib/servlet-api.jar",
+    "D:/TOMCAT/apache-tomcat-9.0.120/lib/servlet-api.jar"
+  ]
 }

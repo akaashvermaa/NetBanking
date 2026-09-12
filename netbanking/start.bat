@@ -68,9 +68,19 @@ if errorlevel 1 (
 )
 echo Compilation OK.
 
+set "CATALINA_HOME=%TOMCAT_DIR%"
+echo Deploying web application...
+set "APP_DIR=%CATALINA_HOME%\webapps\netbanking"
+if exist "%APP_DIR%" rmdir /s /q "%APP_DIR%"
+xcopy "%PROJECT_DIR%WebContent" "%APP_DIR%" /E /I /Y /Q >nul
+if errorlevel 1 (
+    echo Deployment FAILED.
+    pause
+    exit /b 1
+)
+
 echo.
 echo Starting Tomcat...
-set "CATALINA_HOME=%TOMCAT_DIR%"
 call "%CATALINA_HOME%\bin\startup.bat"
 
 echo Waiting for the server to come up...
