@@ -66,26 +66,16 @@
             <p class="db-balance-meta">Account <span class="num"><%= account.getAccountNumber() %></span></p>
         </article>
 
-        <nav class="db-actions" aria-label="Quick actions">
-            <a href="<%= request.getContextPath() %>/transfer" class="db-action db-action-primary">
-                <span class="db-action-icon">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
-                </span>
-                <span class="db-action-text">
-                    <strong>Send money</strong>
-                    <span>Transfer to another account</span>
-                </span>
-            </a>
-            <a href="<%= request.getContextPath() %>/history" class="db-action">
-                <span class="db-action-icon">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                </span>
-                <span class="db-action-text">
-                    <strong>Transaction history</strong>
-                    <span>Everything on this account</span>
-                </span>
-            </a>
-        </nav>
+        <article class="db-card db-details">
+            <h2>Account details</h2>
+            <dl class="db-detail-list">
+                <div><dt>Holder</dt><dd><%= dashboardFullName %></dd></div>
+                <div><dt>Account number</dt><dd class="num"><%= account.getAccountNumber() %></dd></div>
+                <div><dt>Account type</dt><dd><%= Account.TYPE_CURRENT.equals(account.getAccountType()) ? "Current" : "Savings" %></dd></div>
+                <div><dt>Member since</dt><dd><%= monthFmt.format(account.getCreatedAt()) %></dd></div>
+                <div><dt>Status</dt><dd><%= account.getStatus() %></dd></div>
+            </dl>
+        </article>
 
     </section>
 
@@ -142,18 +132,9 @@
         <aside class="db-side">
 
             <article class="db-card db-tip">
-                <p class="db-tip-text">&ldquo;<%= moneyTip %>&rdquo;</p>
-            </article>
-
-            <article class="db-card db-details" id="details">
-                <h2>Account details</h2>
-                <dl class="db-detail-list">
-                    <div><dt>Holder</dt><dd><%= dashboardFullName %></dd></div>
-                    <div><dt>Account number</dt><dd class="num"><%= account.getAccountNumber() %></dd></div>
-                    <div><dt>Account type</dt><dd><%= Account.TYPE_CURRENT.equals(account.getAccountType()) ? "Current" : "Savings" %></dd></div>
-                    <div><dt>Member since</dt><dd><%= monthFmt.format(account.getCreatedAt()) %></dd></div>
-                    <div><dt>Status</dt><dd><%= account.getStatus() %></dd></div>
-                </dl>
+                <span class="db-tip-mark" aria-hidden="true">&#8220;</span>
+                <p class="eyebrow db-tip-eyebrow">Money tip</p>
+                <p class="db-tip-text"><%= moneyTip %></p>
             </article>
 
             <p class="db-security">
