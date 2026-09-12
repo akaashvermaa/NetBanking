@@ -14,14 +14,15 @@ import java.util.List;
 public class AccountDAO {
 
     public Account create(Account account) throws SQLException {
-        String sql = "INSERT INTO accounts (user_id, account_number, balance, status) VALUES (?, ?, ?, ?) "
-                + "RETURNING account_id, created_at";
+        String sql = "INSERT INTO accounts (user_id, account_number, balance, status, account_type) "
+                + "VALUES (?, ?, ?, ?, ?) RETURNING account_id, created_at";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, account.getUserId());
             ps.setString(2, account.getAccountNumber());
             ps.setBigDecimal(3, account.getBalance());
             ps.setString(4, account.getStatus());
+            ps.setString(5, account.getAccountType());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     account.setAccountId(rs.getInt("account_id"));
@@ -33,7 +34,7 @@ public class AccountDAO {
     }
 
     public Account findByAccountNumber(String accountNumber) throws SQLException {
-        String sql = "SELECT account_id, user_id, account_number, balance, status, created_at "
+        String sql = "SELECT account_id, user_id, account_number, balance, status, account_type, created_at "
                 + "FROM accounts WHERE account_number = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -48,7 +49,7 @@ public class AccountDAO {
     }
 
     public Account findById(int accountId) throws SQLException {
-        String sql = "SELECT account_id, user_id, account_number, balance, status, created_at "
+        String sql = "SELECT account_id, user_id, account_number, balance, status, account_type, created_at "
                 + "FROM accounts WHERE account_id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -63,7 +64,7 @@ public class AccountDAO {
     }
 
     public Account findByUserId(int userId) throws SQLException {
-        String sql = "SELECT account_id, user_id, account_number, balance, status, created_at "
+        String sql = "SELECT account_id, user_id, account_number, balance, status, account_type, created_at "
                 + "FROM accounts WHERE user_id = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -82,8 +83,8 @@ public class AccountDAO {
      * (populates Account.holderName / holderEmail).
      */
     public List<Account> findAllWithHolders() throws SQLException {
-        String sql = "SELECT a.account_id, a.user_id, a.account_number, a.balance, a.status, a.created_at, "
-                + "u.full_name, u.email "
+        String sql = "SELECT a.account_id, a.user_id, a.account_number, a.balance, a.status, a.account_type, a.created_at, "
+                + "u.full_name, u.email, u.profile_photo "
                 + "FROM accounts a JOIN users u ON u.user_id = a.user_id "
                 + "ORDER BY a.created_at DESC";
         List<Account> accounts = new ArrayList<>();
@@ -94,6 +95,7 @@ public class AccountDAO {
                 Account account = mapRow(rs);
                 account.setHolderName(rs.getString("full_name"));
                 account.setHolderEmail(rs.getString("email"));
+                account.setHolderProfilePhoto(rs.getString("profile_photo"));
                 accounts.add(account);
             }
         }
@@ -116,7 +118,7 @@ public class AccountDAO {
      * balance and overdraw it. Must be called with autoCommit disabled.
      */
     public Account findByIdForUpdate(int accountId, Connection conn) throws SQLException {
-        String sql = "SELECT account_id, user_id, account_number, balance, status, created_at "
+        String sql = "SELECT account_id, user_id, account_number, balance, status, account_type, created_at "
                 + "FROM accounts WHERE account_id = ? FOR UPDATE";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, accountId);
@@ -150,6 +152,7 @@ public class AccountDAO {
         account.setAccountNumber(rs.getString("account_number"));
         account.setBalance(rs.getBigDecimal("balance"));
         account.setStatus(rs.getString("status"));
+        account.setAccountType(rs.getString("account_type"));
         account.setCreatedAt(rs.getTimestamp("created_at"));
         return account;
     }

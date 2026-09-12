@@ -32,6 +32,12 @@ connection.properties
 .env.local
 
 # ==========================================
+# User-uploaded content
+# ==========================================
+WebContent/static/uploads/
+netbanking/WebContent/static/uploads/
+
+# ==========================================
 # IDE & Tooling Files
 # ==========================================
 .vscode/

@@ -18,7 +18,7 @@
     <div class="topbar">
         <div>
             <p class="page-title">Manage Users</p>
-            <p class="page-subtitle">Every account on NetBanking, with its holder and status.</p>
+            <p class="page-subtitle">Every account on NetBanking, with its holder, photo, type, and status.</p>
         </div>
         <a href="<%= request.getContextPath() %>/admin/add-user" class="btn btn-dark">+ Add user</a>
     </div>
@@ -38,9 +38,11 @@
             <table class="txn-table">
                 <thead>
                     <tr>
+                        <th>Photo</th>
                         <th>Holder</th>
                         <th>Email</th>
                         <th>Account number</th>
+                        <th>Type</th>
                         <th class="text-right">Balance</th>
                         <th>Status</th>
                         <th class="text-right">Actions</th>
@@ -49,11 +51,22 @@
                 <tbody>
                 <% for (Account account : accounts) {
                     String statusClass = account.getStatus().toLowerCase();
+                    String photo = account.getHolderProfilePhoto();
+                    boolean hasPhoto = photo != null && !photo.isEmpty();
+                    boolean isCurrent = Account.TYPE_CURRENT.equals(account.getAccountType());
                 %>
                     <tr>
+                        <td>
+                            <% if (hasPhoto) { %>
+                                <img class="user-photo-thumb" src="<%= request.getContextPath() %>/static/uploads/profile-photos/<%= photo %>" alt="Profile photo of <%= account.getHolderName() %>">
+                            <% } else { %>
+                                <span class="user-photo-none">No Profile Photo</span>
+                            <% } %>
+                        </td>
                         <td><%= account.getHolderName() %></td>
                         <td class="text-muted"><%= account.getHolderEmail() %></td>
                         <td class="num"><%= account.getAccountNumber() %></td>
+                        <td><span class="badge <%= isCurrent ? "badge-current" : "badge-savings" %>"><%= account.getAccountType() %></span></td>
                         <td class="text-right num">&#8377;<%= String.format("%,.2f", account.getBalance()) %></td>
                         <td>
                             <span class="status-pill status-pill-<%= statusClass %>">

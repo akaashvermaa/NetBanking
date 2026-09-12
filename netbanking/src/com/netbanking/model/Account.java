@@ -9,16 +9,21 @@ public class Account {
     public static final String STATUS_FROZEN = "FROZEN";
     public static final String STATUS_CLOSED = "CLOSED";
 
+    public static final String TYPE_SAVINGS = "SAVINGS";
+    public static final String TYPE_CURRENT = "CURRENT";
+
     private int accountId;
     private int userId;
     private String accountNumber;
     private BigDecimal balance;
     private String status;
+    private String accountType;
     private Timestamp createdAt;
 
     // Populated only by admin queries that join the owning user; null otherwise.
     private String holderName;
     private String holderEmail;
+    private String holderProfilePhoto;
 
     public Account() {
     }
@@ -95,5 +100,21 @@ public class Account {
 
     public void setHolderEmail(String holderEmail) {
         this.holderEmail = holderEmail;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public void setAccountType(String accountType) {
+        this.accountType = accountType;
+    }
+
+    public String getHolderProfilePhoto() {
+        return holderProfilePhoto;
+    }
+
+    public void setHolderProfilePhoto(String holderProfilePhoto) {
+        this.holderProfilePhoto = holderProfilePhoto;
     }
 }

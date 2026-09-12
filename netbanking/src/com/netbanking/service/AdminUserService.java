@@ -7,6 +7,7 @@ import com.netbanking.model.Account;
 import com.netbanking.model.Transaction;
 import com.netbanking.model.User;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -33,12 +34,18 @@ public class AdminUserService {
         return transactionDAO.findAll();
     }
 
-    /** Admin-created users go through exactly the same path as self-registration. */
-    public Account createUser(String fullName, String email, String plainPassword) throws AuthException, SQLException {
-        User user = authService.register(fullName, email, plainPassword);
+    /**
+     * Admin-created users go through the same register() as self-registration,
+     * but with an admin-chosen opening balance, account type, and optional
+     * profile photo instead of the fixed signup defaults.
+     */
+    public Account createUser(String fullName, String email, String plainPassword, BigDecimal openingBalance,
+            String accountType, String profilePhoto) throws AuthException, SQLException {
+        User user = authService.register(fullName, email, plainPassword, openingBalance, accountType, profilePhoto);
         Account account = accountDAO.findByUserId(user.getUserId());
         account.setHolderName(user.getFullName());
         account.setHolderEmail(user.getEmail());
+        account.setHolderProfilePhoto(user.getProfilePhoto());
         return account;
     }
 

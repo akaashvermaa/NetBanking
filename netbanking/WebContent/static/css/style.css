@@ -152,6 +152,13 @@ a {
     border-color: var(--color-primary);
 }
 
+.form-hint {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: 12px;
+    color: rgba(var(--color-primary-rgb), 0.5);
+}
+
 /* ---------- Alerts ---------- */
 
 .alert {
@@ -881,6 +888,29 @@ table.txn-table td {
 .badge-debit { background: rgba(220, 38, 38, 0.1); color: var(--color-danger); }
 .badge-credit { background: rgba(22, 163, 74, 0.1); color: var(--color-success); }
 .badge-transfer { background: rgba(var(--color-primary-rgb), 0.08); color: rgba(var(--color-primary-rgb), 0.7); }
+.badge-savings { background: rgba(37, 99, 235, 0.1); color: var(--color-info); }
+.badge-current { background: rgba(var(--color-primary-rgb), 0.08); color: rgba(var(--color-primary-rgb), 0.7); }
+
+.user-photo-cell {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.user-photo-thumb {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid var(--color-border);
+}
+
+.user-photo-none {
+    font-size: 12px;
+    font-style: italic;
+    color: rgba(var(--color-primary-rgb), 0.4);
+}
 
 /* Account-status pill for use on white/light surfaces (tables, lists).   */
 /* .db-status-* is deliberately lighter/more saturated for the dark      */

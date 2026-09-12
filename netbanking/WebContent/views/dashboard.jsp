@@ -154,6 +154,7 @@
                 <dl class="db-detail-list">
                     <div><dt>Holder</dt><dd><%= dashboardFullName %></dd></div>
                     <div><dt>Account number</dt><dd class="num"><%= account.getAccountNumber() %></dd></div>
+                    <div><dt>Account type</dt><dd><%= Account.TYPE_CURRENT.equals(account.getAccountType()) ? "Current" : "Savings" %></dd></div>
                     <div><dt>Member since</dt><dd><%= monthFmt.format(account.getCreatedAt()) %></dd></div>
                     <div><dt>Status</dt><dd><%= account.getStatus() %></dd></div>
                 </dl>

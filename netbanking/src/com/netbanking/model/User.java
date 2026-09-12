@@ -9,6 +9,8 @@ public class User {
     private String email;
     private String passwordHash;
     private Timestamp createdAt;
+    // Filename under WebContent/static/uploads/profile-photos/, or null if none was uploaded.
+    private String profilePhoto;
 
     public User() {
     }
@@ -59,5 +61,13 @@ public class User {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getProfilePhoto() {
+        return profilePhoto;
+    }
+
+    public void setProfilePhoto(String profilePhoto) {
+        this.profilePhoto = profilePhoto;
     }
 }

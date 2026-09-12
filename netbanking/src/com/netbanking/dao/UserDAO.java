@@ -11,13 +11,14 @@ import java.sql.SQLException;
 public class UserDAO {
 
     public User create(User user) throws SQLException {
-        String sql = "INSERT INTO users (full_name, email, password_hash) VALUES (?, ?, ?) "
+        String sql = "INSERT INTO users (full_name, email, password_hash, profile_photo) VALUES (?, ?, ?, ?) "
                 + "RETURNING user_id, created_at";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, user.getFullName());
             ps.setString(2, user.getEmail());
             ps.setString(3, user.getPasswordHash());
+            ps.setString(4, user.getProfilePhoto());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     user.setUserId(rs.getInt("user_id"));
@@ -29,7 +30,8 @@ public class UserDAO {
     }
 
     public User findByEmail(String email) throws SQLException {
-        String sql = "SELECT user_id, full_name, email, password_hash, created_at FROM users WHERE email = ?";
+        String sql = "SELECT user_id, full_name, email, password_hash, created_at, profile_photo "
+                + "FROM users WHERE email = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
@@ -49,6 +51,7 @@ public class UserDAO {
         user.setEmail(rs.getString("email"));
         user.setPasswordHash(rs.getString("password_hash"));
         user.setCreatedAt(rs.getTimestamp("created_at"));
+        user.setProfilePhoto(rs.getString("profile_photo"));
         return user;
     }
 }

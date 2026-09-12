@@ -1,8 +1,9 @@
 -- NetBanking database schema
 --
--- Recreates the schema exactly as it exists in the running dev database
--- (including the two fixes applied after the fact: transactions.kind, and
--- the accounts.status check constraint that originally omitted CLOSED).
+-- Recreates the schema exactly as it exists in the running dev database,
+-- including several fixes/additions applied after the fact: transactions.kind,
+-- the accounts.status check constraint that originally omitted CLOSED, and
+-- accounts.account_type / users.profile_photo.
 --
 -- Usage (as a superuser, e.g. `postgres`):
 --
@@ -23,7 +24,8 @@ CREATE TABLE users (
     full_name     VARCHAR(100) NOT NULL,
     email         VARCHAR(150) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
-    created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    profile_photo VARCHAR(255)  -- filename under WebContent/static/uploads/profile-photos/, NULL if none
 );
 
 CREATE TABLE accounts (
@@ -33,6 +35,8 @@ CREATE TABLE accounts (
     balance        NUMERIC(15,2) NOT NULL DEFAULT 0.00,
     status         VARCHAR(10) NOT NULL DEFAULT 'ACTIVE'
                        CHECK (status IN ('ACTIVE', 'FROZEN', 'CLOSED')),
+    account_type   VARCHAR(10) NOT NULL DEFAULT 'SAVINGS'
+                       CHECK (account_type IN ('SAVINGS', 'CURRENT')),
     created_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

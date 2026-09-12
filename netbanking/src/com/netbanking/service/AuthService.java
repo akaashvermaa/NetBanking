@@ -11,12 +11,23 @@ import java.sql.SQLException;
 
 public class AuthService {
 
-    private static final BigDecimal SIGNUP_BONUS = new BigDecimal("10000.00");
+    private static final BigDecimal SIGNUP_BONUS = new BigDecimal("1000.00");
 
     private final UserDAO userDAO = new UserDAO();
     private final AccountDAO accountDAO = new AccountDAO();
 
+    /** Self-registration: the standard signup bonus, a savings account, no photo. */
     public User register(String fullName, String email, String plainPassword) throws AuthException, SQLException {
+        return register(fullName, email, plainPassword, SIGNUP_BONUS, Account.TYPE_SAVINGS, null);
+    }
+
+    /**
+     * Full form used by the admin "add user" flow: a chosen opening balance,
+     * account type, and an optional profile photo filename (already saved to
+     * disk by the caller - this only records the reference).
+     */
+    public User register(String fullName, String email, String plainPassword, BigDecimal openingBalance,
+            String accountType, String profilePhoto) throws AuthException, SQLException {
         if (userDAO.findByEmail(email) != null) {
             throw new AuthException("Email already registered");
         }
@@ -25,12 +36,14 @@ public class AuthService {
         user.setFullName(fullName);
         user.setEmail(email);
         user.setPasswordHash(PasswordUtil.hash(plainPassword));
+        user.setProfilePhoto(profilePhoto);
         userDAO.create(user);
 
         Account account = new Account();
         account.setUserId(user.getUserId());
         account.setAccountNumber(generateAccountNumber(user.getUserId()));
-        account.setBalance(SIGNUP_BONUS);
+        account.setBalance(openingBalance);
+        account.setAccountType(accountType);
         account.setStatus(Account.STATUS_ACTIVE);
         accountDAO.create(account);
 

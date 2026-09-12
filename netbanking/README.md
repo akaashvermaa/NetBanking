@@ -72,6 +72,12 @@ Two things worth knowing if you're working against an older/hand-created copy of
   ALTER TABLE accounts DROP CONSTRAINT accounts_status_check;
   ALTER TABLE accounts ADD CONSTRAINT accounts_status_check CHECK (status IN ('ACTIVE', 'FROZEN', 'CLOSED'));
   ```
+- `accounts.account_type` (`SAVINGS` / `CURRENT`) and `users.profile_photo` were added later. On an older database:
+  ```sql
+  ALTER TABLE accounts ADD COLUMN IF NOT EXISTS account_type VARCHAR(10) NOT NULL DEFAULT 'SAVINGS';
+  ALTER TABLE accounts ADD CONSTRAINT accounts_account_type_check CHECK (account_type IN ('SAVINGS', 'CURRENT'));
+  ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_photo VARCHAR(255);
+  ```
 
 ---
 
@@ -81,7 +87,7 @@ Two things worth knowing if you're working against an older/hand-created copy of
 
 | URL          | Servlet             | What it does |
 |--------------|---------------------|--------------|
-| `/register`  | `RegisterServlet`   | Creates a user (BCrypt-hashed password) and an account with a ₹10,000 signup bonus; account number is `NB` + zero-padded user id. Rejects duplicate emails. |
+| `/register`  | `RegisterServlet`   | Creates a user (BCrypt-hashed password) and a `SAVINGS` account with a ₹1,000 signup bonus; account number is `NB` + zero-padded user id. Rejects duplicate emails. |
 | `/login`     | `LoginServlet`      | Email + password login; refuses FROZEN / CLOSED accounts with a clear message. Puts the user in the session. |
 | `/logout`    | `LogoutServlet`     | Invalidates the session. |
 | `/dashboard` | `DashboardServlet`  | Shows balance, account number/status, lifetime total sent / received, and the 5 most recent transactions. |
@@ -104,7 +110,7 @@ Rules enforced in `TransferService`:
 | `/admin/logout`         | `AdminLogoutServlet`        | Invalidates the admin session. |
 | `/admin/dashboard`      | `AdminDashboardServlet`     | System stats in one query: total users / accounts / balance, active / frozen / closed counts, total transactions. |
 | `/admin/users`          | `AdminUsersServlet`         | Lists every account with holder name + email; POST actions `freeze`, `unfreeze`, `close`, `reactivate` with state-transition validation and flash messages. |
-| `/admin/add-user`       | `AdminAddUserServlet`       | Admin creates a customer through the same path as self-registration. |
+| `/admin/add-user`       | `AdminAddUserServlet`       | Admin creates a customer with a chosen opening credit (defaults to ₹1,000, no fixed amount), account type (`SAVINGS`/`CURRENT`), and an optional profile photo (JPG/PNG/WEBP, up to 2MB, saved under `WebContent/static/uploads/profile-photos/`). Goes through the same `AuthService.register()` as self-registration otherwise. |
 | `/admin/adjust-balance` | `AdminAdjustBalanceServlet` | Credit or debit any account by account number with a mandatory reason; logged as `ADMIN_CREDIT` / `ADMIN_DEBIT`, atomic with the balance change, cannot go below zero or touch a closed account. |
 | `/admin/transactions`   | `AdminTransactionsServlet`  | Global transaction log with both account numbers joined in. |
 
