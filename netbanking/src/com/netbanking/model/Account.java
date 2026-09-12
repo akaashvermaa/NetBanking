@@ -20,7 +20,7 @@ public class Account {
     private String accountType;
     private Timestamp createdAt;
 
-
+    // Populated only by admin queries that join the owning user; null otherwise.
     private String holderName;
     private String holderEmail;
     private String holderProfilePhoto;

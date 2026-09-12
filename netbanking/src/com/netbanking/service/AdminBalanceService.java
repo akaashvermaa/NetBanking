@@ -15,10 +15,10 @@ public class AdminBalanceService {
     private final AccountDAO accountDAO = new AccountDAO();
     private final TransactionDAO transactionDAO = new TransactionDAO();
 
-
-
-
-
+    /**
+     * Credits or debits an account and writes the audit log entry in the same DB
+     * transaction, so the balance change and its record can never diverge.
+     */
     public void adjust(String accountNumber, BigDecimal amount, boolean credit, String reason)
             throws AdminException, SQLException {
 

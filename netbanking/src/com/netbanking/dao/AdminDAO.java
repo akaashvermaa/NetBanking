@@ -49,7 +49,7 @@ public class AdminDAO {
         return null;
     }
 
-
+    /** System-wide figures for the admin dashboard, fetched in a single round trip. */
     public SystemStats getSystemStats() throws SQLException {
         String sql = "SELECT "
                 + "(SELECT COUNT(*) FROM users) AS total_users, "
@@ -86,14 +86,14 @@ public class AdminDAO {
         public int totalTransactions;
     }
 
-
-
-
-
-
-
-
-
+    /**
+     * Daily cash movement for the trailing {@code days} days (inclusive of
+     * today): inflow is everything credited to any account that day (ordinary
+     * transfers-in plus admin credits), outflow is everything debited from any
+     * account (transfers-out plus admin debits). Days with no activity are
+     * still returned with zero amounts via generate_series, so the chart
+     * never has gaps.
+     */
     public List<DailyFlow> getDailyCashFlow(int days) throws SQLException {
         String sql = "SELECT d.day::date AS day, "
                 + "COALESCE(SUM(CASE WHEN t.to_account_id IS NOT NULL THEN t.amount END), 0) AS inflow, "

@@ -11,29 +11,29 @@ import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.Arrays;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/**
+ * One-off command-line bootstrap for the very first admin account.
+ *
+ * There is no UI for creating admins (by design - admin accounts shouldn't
+ * be self-service), so this is the only way to get one into the database
+ * without hand-writing a BCrypt hash into a SQL INSERT.
+ *
+ * Usage (from netbanking/, after start.bat has compiled the classes at
+ * least once so WebContent/WEB-INF/classes/db.properties is in place):
+ *
+ *   java -cp "WebContent\WEB-INF\classes;WebContent\WEB-INF\lib\postgresql-42.7.4.jar;WebContent\WEB-INF\lib\jbcrypt-0.4.jar" ^
+ *        com.netbanking.tool.CreateAdmin "Admin Name" admin@example.com
+ *
+ * It then prompts for a password (hidden if run from a real terminal,
+ * visible with a fallback prompt if run from an IDE console that has no
+ * java.io.Console attached).
+ */
 public class CreateAdmin {
 
-
-
-
-
+    // Shared across both readPassword() calls: a fresh BufferedReader wrapping
+    // System.in on every call would each eagerly buffer-read whatever input is
+    // already available (piped/redirected stdin in particular), so the first
+    // reader can silently consume the line meant for the second one.
     private static final BufferedReader STDIN_FALLBACK = new BufferedReader(new InputStreamReader(System.in));
 
     public static void main(String[] args) {
@@ -88,8 +88,8 @@ public class CreateAdmin {
             return console.readPassword(prompt);
         }
 
-
-
+        // No java.io.Console (common when run from an IDE) - fall back to a
+        // plain, visible prompt read from stdin instead of failing outright.
         System.out.println(prompt + " (visible - no console attached)");
         try {
             String line = STDIN_FALLBACK.readLine();

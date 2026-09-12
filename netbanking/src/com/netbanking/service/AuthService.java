@@ -16,16 +16,16 @@ public class AuthService {
     private final UserDAO userDAO = new UserDAO();
     private final AccountDAO accountDAO = new AccountDAO();
 
-
+    /** Self-registration: the standard signup bonus, a savings account, no photo. */
     public User register(String fullName, String email, String plainPassword) throws AuthException, SQLException {
         return register(fullName, email, plainPassword, SIGNUP_BONUS, Account.TYPE_SAVINGS, null);
     }
 
-
-
-
-
-
+    /**
+     * Full form used by the admin "add user" flow: a chosen opening balance,
+     * account type, and an optional profile photo filename (already saved to
+     * disk by the caller - this only records the reference).
+     */
     public User register(String fullName, String email, String plainPassword, BigDecimal openingBalance,
             String accountType, String profilePhoto) throws AuthException, SQLException {
         if (userDAO.findByEmail(email) != null) {

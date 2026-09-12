@@ -6,10 +6,10 @@ import com.netbanking.model.Transaction;
 import java.math.BigDecimal;
 import java.util.List;
 
-
-
-
-
+/**
+ * Plain carrier for what DashboardServlet needs in one call: the user's own
+ * account, their most recent transactions, and lifetime sent/received totals.
+ */
 public class DashboardData {
 
     private final Account account;

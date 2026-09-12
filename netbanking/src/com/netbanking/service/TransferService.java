@@ -16,7 +16,7 @@ public class TransferService {
     private final AccountDAO accountDAO = new AccountDAO();
     private final TransactionDAO transactionDAO = new TransactionDAO();
 
-
+    /** Suggested recipients for the transfer page - see AccountDAO.findOtherActiveAccounts. */
     public List<Account> listRecipients(int currentUserId) throws SQLException {
         return accountDAO.findOtherActiveAccounts(currentUserId);
     }
@@ -45,8 +45,8 @@ public class TransferService {
             conn = DBConnection.getConnection();
             conn.setAutoCommit(false);
 
-
-
+            // Re-fetch with row locks inside the transaction so concurrent transfers
+            // against the same account can't both read a stale balance and overdraw it.
             Account lockedSender = accountDAO.findByIdForUpdate(sender.getAccountId(), conn);
             Account lockedRecipient = accountDAO.findByIdForUpdate(recipient.getAccountId(), conn);
 

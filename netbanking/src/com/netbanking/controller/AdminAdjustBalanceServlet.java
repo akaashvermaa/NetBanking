@@ -20,7 +20,7 @@ public class AdminAdjustBalanceServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        // Pre-fill the account number when linked from the users table.
         req.setAttribute("accountNumber", req.getParameter("accountNumber"));
         req.getRequestDispatcher("/views/admin/admin-adjust-balance.jsp").forward(req, resp);
     }
@@ -48,11 +48,11 @@ public class AdminAdjustBalanceServlet extends HttpServlet {
         try {
             boolean credit = "credit".equals(direction);
             adminBalanceService.adjust(accountNumber, amount, credit, reason);
-
-
-
-
-
+            // Rupee sign written as a unicode escape, not a literal character:
+            // javac reads source files using the platform default charset unless
+            // -encoding is passed, and a literal here gets silently mangled on
+            // such a build. An escape is immune to that - Java resolves unicode
+            // escapes in a pure-ASCII translation pass before anything else.
             req.setAttribute("success", (credit ? "Credited " : "Debited ") + "\u20B9"
                     + String.format("%,.2f", amount) + (credit ? " to " : " from ") + accountNumber);
             req.removeAttribute("reason");

@@ -72,8 +72,8 @@ public class AdminAddUserServlet extends HttpServlet {
         try {
             photoPart = req.getPart("profilePhoto");
         } catch (IllegalStateException e) {
-
-
+            // Tomcat throws this from getPart() itself when the file exceeds
+            // @MultipartConfig's maxFileSize, before any validation below runs.
             req.setAttribute("error", "Photo is too large (max 2MB)");
             req.getRequestDispatcher("/views/admin/admin-add-user.jsp").forward(req, resp);
             return;

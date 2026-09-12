@@ -16,7 +16,7 @@ public class Transaction {
     public static final String KIND_ADMIN_DEBIT = "ADMIN_DEBIT";
 
     private int transactionId;
-
+    // 0 means "no account on this side" (stored as SQL NULL) - admin adjustments have only one side.
     private int fromAccountId;
     private int toAccountId;
     private BigDecimal amount;
@@ -26,7 +26,7 @@ public class Transaction {
     private String status;
     private Timestamp transactionDate;
 
-
+    // Populated only by the admin global-log query that joins account numbers; null otherwise.
     private String fromAccountNumber;
     private String toAccountNumber;
 

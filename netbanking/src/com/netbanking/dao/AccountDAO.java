@@ -78,10 +78,10 @@ public class AccountDAO {
         return null;
     }
 
-
-
-
-
+    /**
+     * Admin listing: every account joined with its owner's name and email
+     * (populates Account.holderName / holderEmail).
+     */
     public List<Account> findAllWithHolders() throws SQLException {
         String sql = "SELECT a.account_id, a.user_id, a.account_number, a.balance, a.status, a.account_type, a.created_at, "
                 + "u.full_name, u.email, u.profile_photo "
@@ -102,13 +102,13 @@ public class AccountDAO {
         return accounts;
     }
 
-
-
-
-
-
-
-
+    /**
+     * Other active accounts (not the caller's own) for the transfer page's
+     * recipient picker - lets a demo pick a payee instead of typing an account
+     * number from memory. Capped to the dozen most recently created accounts;
+     * only ACTIVE ones, since a suggested recipient the transfer would then
+     * reject (frozen/closed) is worse than not suggesting one at all.
+     */
     public List<Account> findOtherActiveAccounts(int excludeUserId) throws SQLException {
         String sql = "SELECT a.account_id, a.user_id, a.account_number, a.balance, a.status, a.account_type, a.created_at, "
                 + "u.full_name "
@@ -142,11 +142,11 @@ public class AccountDAO {
         }
     }
 
-
-
-
-
-
+    /**
+     * Fetches the account row locked (FOR UPDATE) within the caller's transaction,
+     * so concurrent transfers against the same account can't both read a stale
+     * balance and overdraw it. Must be called with autoCommit disabled.
+     */
     public Account findByIdForUpdate(int accountId, Connection conn) throws SQLException {
         String sql = "SELECT account_id, user_id, account_number, balance, status, account_type, created_at "
                 + "FROM accounts WHERE account_id = ? FOR UPDATE";
@@ -161,11 +161,11 @@ public class AccountDAO {
         return null;
     }
 
-
-
-
-
-
+    /**
+     * Transactional update: caller owns the Connection's commit/rollback so this
+     * can be combined atomically with the counterpart account's update and the
+     * transaction log insert (see TransferService).
+     */
     public void updateBalance(int accountId, BigDecimal newBalance, Connection conn) throws SQLException {
         String sql = "UPDATE accounts SET balance = ? WHERE account_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
